@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block headeritem %}
+
+{% for picture in pictures %}
+
+<img class='pictures' src='{{ picture.image.url }}' />
+
+{% endfor %}
+
+{% endblock %}
