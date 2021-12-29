@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% block headeritem %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/pic.css' %}">
 
 {% for picture in pictures %}
 
