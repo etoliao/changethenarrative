@@ -3,3 +3,4 @@ db.sqlite3
 ATHSvenv
 media/
 .DS_Store
+static/*
