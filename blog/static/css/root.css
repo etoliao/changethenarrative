@@ -99,3 +99,25 @@ h4 {
   .is-clickable {
     cursor: pointer;
   }
+
+  .headerlink {
+    color: #ffffff;
+    font-family: 'Anton', bold;
+    padding: 0px 0px 0px 300px;
+    font-size: 15pt;
+  }
+
+  .inline {
+      display:inline;
+  }
+
+  .right {
+      float:right;
+  }
+
+  .col{
+    font-family: 'Anton', bold;
+    color: #000000;
+    font-size: 25pt;
+
+  }

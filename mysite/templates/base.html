@@ -12,7 +12,13 @@
           <div class="container">
             {% block headeritem %}
             {% endblock %}
-            <h1><a href="/">TEDxATHS</a></h1>
+            <h1 class="inline">
+                <a href="/">TEDxATHS</a>
+            </h1>
+            <span class="right"> 
+                <a class="headerlink" href="{% url 'pictures_page'%}">Pictures</a>
+                <a class="headerlink" href="{% url 'post_list'%}">Blogs</a>
+            </span>
           </div>
         </header>
         <main class="container">
