@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'pictures.apps.PicturesConfig',
     'homepage.apps.HomepageConfig',
+    'sponsors.apps.SponsorsConfig',
 ]
 
 MIDDLEWARE = [
