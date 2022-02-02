@@ -2,5 +2,5 @@ db.sqlite3
 *.pyc
 ATHSvenv
 media/
-.DS_Store
+*.DS_Store
 static/*
