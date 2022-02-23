@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/sponsors.css' %}">
+
+{% for sponsor in sponsors %}
+
+<img class='sponsors' src='{{ sponsor.image.url }}' />
+
+{% endfor %}
+
+{% endblock %}
