@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from blog.models import Post
 from django.contrib.auth import get_user_model
 from django.utils.timezone import timedelta, now
+from .factories import UserFactory, PostFactory
 
 class PostListTest(TestCase):
     def setUp(self):
@@ -15,13 +16,11 @@ class PostListTest(TestCase):
         self.assertEqual(len(response.context["posts"]), 0)
     
     def test_showposts(self):
-        User = get_user_model()
-        author = User.objects.create(username="test user")
-        author.save()
+        author = UserFactory()
         yest = now() - timedelta(days=1)
         tom = now() + timedelta(days=1)
-        postyest = Post.objects.create(title="Yest Post", author=author, published_date=yest, text="something")
-        posttom = Post.objects.create(title="Tom Post", author=author, published_date=tom, text= "nothing")
+        postyest = PostFactory(published_date=yest, text="something")
+        posttom = PostFactory(published_date=tom, text= "nothing")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["posts"]), [postyest])
@@ -31,10 +30,7 @@ class PostListTest(TestCase):
 class PostDetailTest(TestCase):
     def setUp(self):
         super().setUp()
-        User = get_user_model()
-        self.author = User.objects.create(username="test user")
-        self.author.set_password("testpassword")
-        self.author.save()
+        self.author = UserFactory(username="test user", password="testpassword")
         self.tom = now() + timedelta(days=1)
         self.yest = now() - timedelta(days=1)
 
@@ -44,14 +40,14 @@ class PostDetailTest(TestCase):
         self.assertEqual(response.status_code, 404)
     
     def test_postexistant_notloggedin(self):
-        postyest = Post.objects.create(title="Yest Post", author=self.author, published_date=self.yest, text="something")
+        postyest = PostFactory(published_date=self.yest, text="something")
         url = reverse("post_detail", kwargs= {"pk": postyest.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_postexistant_loggedin(self):
         self.assertTrue(self.client.login(username="test user", password="testpassword"))
-        postyest = Post.objects.create(title="Yest Post", author=self.author, published_date=self.yest, text="something")
+        postyest = PostFactory(published_date=self.yest, text="something")
         url = reverse("post_detail", kwargs= {"pk": postyest.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -59,14 +55,14 @@ class PostDetailTest(TestCase):
     def test_notpublishedpost_notloggedin(self):
         """identifies a non-published post and returns an error if not logged in"""
         self.client.logout()
-        posttom = Post.objects.create(title="Tom Post", author=self.author, published_date=self.tom, text= "nothing")
+        posttom = PostFactory(published_date=self.tom, text= "nothing")
         url = reverse("post_detail", kwargs= {"pk": posttom.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_notpublishedpost_loggedin(self):
         """identifies a non-published post and allows a logged in user"""
-        posttom = Post.objects.create(title="Tom Post", author=self.author, published_date=self.tom, text= "nothing")
+        posttom = PostFactory(published_date=self.tom, text= "nothing")
         url = reverse("post_detail", kwargs= {"pk": posttom.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -74,10 +70,7 @@ class PostDetailTest(TestCase):
 class PostNewTest(TestCase):
     def setUp(self):
         super().setUp()
-        User = get_user_model()
-        self.author = User.objects.create(username="test user")
-        self.author.set_password("testpassword")
-        self.author.save()
+        self.author = UserFactory(username="test user", password="testpassword")
         self.url = reverse("post_new")
         self.postdata = {
             "title": "testpost",
@@ -113,10 +106,7 @@ class PostNewTest(TestCase):
 class PostEditTest(TestCase):
     def setUp(self):
         super().setUp()
-        User = get_user_model()
-        self.author = User.objects.create(username="test user")
-        self.author.set_password("testpassword")
-        self.author.save()
+        self.author = UserFactory(username="test user", password="testpassword")
         self.postdata = {
             "title": "testpost",
             "text": "testtext",
@@ -133,7 +123,7 @@ class PostEditTest(TestCase):
     def test_editingposts_loggedin(self):
         """if user is logged in, can edit post"""
         self.assertTrue(self.client.login(username="test user", password="testpassword"))
-        post = Post.objects.create(title="Post", author=self.author, text="something")
+        post = PostFactory(text="something")
         url = reverse("post_edit", kwargs= {"pk": post.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -141,7 +131,7 @@ class PostEditTest(TestCase):
     def test_editpubposts_notloggedin(self):
         """if logged out, cannot edit published posts"""
         self.client.logout()
-        postyest = Post.objects.create(title="Yest Post", author=self.author, published_date=self.yest, text="something")
+        postyest = PostFactory(published_date=self.yest, text="something")
         url = reverse("post_edit", kwargs= {"pk": postyest.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -149,7 +139,7 @@ class PostEditTest(TestCase):
     def test_editpubposts_loggedin(self):
         """if logged in, can edit published posts"""
         self.assertTrue(self.client.login(username="test user", password="testpassword"))
-        postyest = Post.objects.create(title="Yest Post", author=self.author, published_date=self.yest, text="something")
+        postyest = PostFactory(published_date=self.yest, text="something")
         url = reverse("post_edit", kwargs= {"pk": postyest.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -157,7 +147,7 @@ class PostEditTest(TestCase):
     def test_editnonpubposts_notloggedin(self):
         """if a user is not logged in, they cannot edit unpublished posts"""
         self.client.logout()
-        posttom = Post.objects.create(title="Tom Post", author=self.author, published_date=self.tom, text= "nothing")
+        posttom = PostFactory(published_date=self.tom, text= "nothing")
         url = reverse("post_edit", kwargs= {"pk": posttom.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -165,7 +155,7 @@ class PostEditTest(TestCase):
     def test_editnonpubposts_loggedin(self):
         """if a user is logged in, they can edit unpublished posts"""
         self.assertTrue(self.client.login(username="test user", password="testpassword"))
-        posttom = Post.objects.create(title="Tom Post", author=self.author, published_date=self.tom, text= "nothing")
+        posttom = PostFactory(published_date=self.tom, text= "nothing")
         url = reverse("post_edit", kwargs= {"pk": posttom.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
