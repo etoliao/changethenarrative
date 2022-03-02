@@ -8,7 +8,7 @@ class PicturesTest(TestCase):
         self.url = reverse("pictures_page")
 
     def test_nopictures(self):
-        """make sure there are pictures on the page"""
+        """checks if there are no pictures on the page"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["pictures"]), [])

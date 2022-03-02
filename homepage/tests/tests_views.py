@@ -7,6 +7,6 @@ class HomepageTest(TestCase):
         self.url = reverse("homepage")
 
     def test_nothingshows(self):
-        """if there is a blank page, that is wrong"""
+        """checks if there is nothing on the page"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)

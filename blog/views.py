@@ -37,8 +37,6 @@ def post_new(request):
     return render(request, 'blog/post_edit.html', {'form': form})
 
 def post_edit(request, pk):
-    #import ipdb
-    #ipdb.set_trace()
     post = get_object_or_404(Post, pk=pk)
     if not request.user.is_authenticated:
         raise Http404()
