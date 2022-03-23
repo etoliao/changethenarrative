@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 
 import os
 
-from dotenv import load_dotenv
+import dotenv
 
 from django.core.wsgi import get_wsgi_application
 
@@ -17,6 +17,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = get_wsgi_application()
 
+# Load the environment variables, based on https://help.pythonanywhere.com/pages/environment-variables-for-web-apps
+
 project_folder = os.path.expanduser('~/changethenarrative')
-load_dotenv(os.path.join('.env'))
+dotenv.read_dotenv(os.path.join('.env'))
 SECRET_KEY = os.getenv("SECRET_KEY")
