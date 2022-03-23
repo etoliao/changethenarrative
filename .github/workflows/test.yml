@@ -37,3 +37,5 @@ jobs:
         python manage.py test
       env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/tedx
+          SECRET_KEY: testpassword
+          DEBUG: True
